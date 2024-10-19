@@ -11,7 +11,7 @@
         public string Country { get; set; }
         public string StreetAddress { get; set; }
 
-        // Navigation Property
+       
         public List<Invoice> Invoices { get; set; } = new List<Invoice>();
     }
 
