@@ -8,7 +8,7 @@
         public decimal Amount { get; set; }
         public string Status { get; set; } // Başarılı, Başarısız
 
-        // Navigation Property
+
         public Invoice Invoice { get; set; }
     }
 
