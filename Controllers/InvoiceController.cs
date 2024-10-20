@@ -27,6 +27,7 @@ namespace Invoices.Controllers
                 .Include(i => i.InvoiceItems)
                     .ThenInclude(ii => ii.Item)
                 .Include(i => i.User)
+                .Where(i=>!i.Client.IsDeleted)
                 .Include(i => i.Client)
                 .Where(i => !i.IsDeleted) // Silinmemiş faturaları filtrele
                 .Select(i => new
@@ -213,20 +214,20 @@ namespace Invoices.Controllers
 
             return Ok(existingItem);
         }
-        //[HttpDelete("Items/Delete/{id}")]
-        //public IActionResult DeleteItem(int id)
-        //{
-        //    var item = _context.Items.FirstOrDefault(i => i.Id == id);
-        //    if (item == null)
-        //    {
-        //        return NotFound($"Item with id {id} not found.");
-        //    }
-        //    item.IsDeleted = true; // Silinmiş gibi işaretle
-        //    _context.Clients.Update(item);
-        //    _context.SaveChanges();
+        [HttpDelete("Items/Delete/{id}")]
+        public IActionResult DeleteItem(int id)
+        {
+            var item = _context.Items.FirstOrDefault(i => i.Id == id);
+            if (item == null)
+            {
+                return NotFound($"Item with id {id} not found.");
+            }
+            item.IsDeleted = true; // Silinmiş gibi işaretle
+            _context.Items.Update(item);
+            _context.SaveChanges();
 
-        //    return Ok();
-        //}
+            return Ok();
+        }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteInvoice(int id)
@@ -237,7 +238,8 @@ namespace Invoices.Controllers
                 return NotFound();
             }
 
-            _context.Invoices.Remove(invoice);
+            invoice.IsDeleted = true; // Silinmiş gibi işaretle
+            _context.Invoices.Update(invoice);
             _context.SaveChanges();
 
             return Ok();
