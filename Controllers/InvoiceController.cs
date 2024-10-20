@@ -18,6 +18,7 @@ namespace Invoices.Controllers
         {
             _context = context;
         }
+
         [HttpGet("AllList")]
         public ActionResult<List<Invoice>> GetAllInvoices()
         {
