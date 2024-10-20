@@ -102,6 +102,7 @@ namespace Invoices.Controllers
 
             var invoice = new Invoice
             {
+                ClientId = invoiceDto.ClientId,
                 UserId = invoiceDto.UserId,
                 InvoiceDate = invoiceDto.InvoiceDate,
                 DueDate = invoiceDto.DueDate,
@@ -131,7 +132,7 @@ namespace Invoices.Controllers
                 return NotFound($" {id} not found.");
             }
 
-
+            
             invoice.UserId = invoiceDto.UserId;
             invoice.InvoiceDate = invoiceDto.InvoiceDate;
             invoice.DueDate = invoiceDto.DueDate;

@@ -10,7 +10,7 @@ namespace Invoices.Dto
         public DateTime DueDate { get; set; }
         public decimal TotalAmount { get; set; }
         public string Status { get; set; } // Ödendi, Beklemede, İptal
-
+        public int ClientId {  get; set; }
       
     }
 }
