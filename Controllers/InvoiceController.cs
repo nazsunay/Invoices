@@ -18,11 +18,28 @@ namespace Invoices.Controllers
         {
             _context = context;
         }
-
-        [HttpGet]
-        public ActionResult<List<DtoAddInvoice>> GetAllInvoices()
+        [HttpGet("AllList")]
+        public ActionResult<List<Invoice>> GetAllInvoices()
         {
-            var invoices = _context.Invoices.ToList();
+            var invoices = _context.Invoices
+              .Include(i => i.Payments)
+              .Include(i => i.InvoiceItems)
+              .Select(i => new {
+                  i.InvoiceId,
+                  i.InvoiceDate,
+                  i.DueDate,
+                  i.TotalAmount,
+                  i.Status,
+                  User = new
+                  {
+                      i.User.UserId,
+                      i.User.Name,
+                  }
+
+
+              })
+              .ToList(); ;
+
             return Ok(invoices);
         }
 
