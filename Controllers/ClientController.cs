@@ -122,19 +122,21 @@ namespace Invoices.Controllers
             return Ok(client);
         }
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteClient(int id)
         {
-            var client = _context.Clients.Find(id);
+            var client = _context.Clients.FirstOrDefault(c => c.Id == id);
             if (client == null)
             {
-                return NotFound();
+                return NotFound($"Client with id {id} not found.");
             }
 
-            _context.Clients.Remove(client);
+            client.IsDeleted = true; // Silinmiş gibi işaretle
+            _context.Clients.Update(client);
             _context.SaveChanges();
 
             return Ok();
         }
+
     }
 }

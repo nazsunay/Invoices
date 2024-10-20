@@ -10,6 +10,7 @@
         public string PostCode { get; set; }
         public string Country { get; set; }
         public string StreetAddress { get; set; }
+        public bool IsDeleted { get; set; } // Soft delete özelliği
 
         // Navigation Property
         public List<Invoice> Invoices { get; set; } = new List<Invoice>();

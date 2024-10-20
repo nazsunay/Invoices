@@ -8,6 +8,8 @@
         public DateTime DueDate { get; set; }
         public decimal TotalAmount { get; set; }
         public string Status { get; set; } // Ödendi, Beklemede, İptal
+        public bool IsDeleted { get; set; } // Soft delete özelliği
+
 
         public int ClientId {  get; set; }
         public Client Client { get; set; }

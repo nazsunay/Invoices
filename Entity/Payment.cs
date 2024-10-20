@@ -7,6 +7,7 @@
         public DateTime PaymentDate { get; set; }
         public decimal Amount { get; set; }
         public string Status { get; set; } // Başarılı, Başarısız
+        public bool IsDeleted { get; set; } // Soft delete özelliği
 
 
         public Invoice Invoice { get; set; }

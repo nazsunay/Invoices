@@ -25,9 +25,10 @@ namespace Invoices.Controllers
             var invoices = _context.Invoices
                 .Include(i => i.Payments)
                 .Include(i => i.InvoiceItems)
-                .ThenInclude(ii => ii.Item)
+                    .ThenInclude(ii => ii.Item)
                 .Include(i => i.User)
                 .Include(i => i.Client)
+                .Where(i => !i.IsDeleted) // Silinmemiş faturaları filtrele
                 .Select(i => new
                 {
                     i.InvoiceId,
@@ -74,6 +75,7 @@ namespace Invoices.Controllers
         }
 
 
+
         [HttpGet("/{id}")]
         public IActionResult GetInvoiceById(int id)
         {
@@ -86,14 +88,7 @@ namespace Invoices.Controllers
             return Ok(invoice);
         }
 
-        //[HttpGet("filter")]
-        //public IActionResult GetInvoicesByStatus([FromQuery] string status)
-        //{
-        //    var invoices = _context.Invoices
-        //                           .Where(i => i.Status == status)
-        //                           .ToList();
-        //    return Ok(invoices);
-        //}
+  
 
         [HttpPost("Create")]
         public IActionResult CreateInvoice([FromBody] DtoAddInvoice invoiceDto)
@@ -218,20 +213,20 @@ namespace Invoices.Controllers
 
             return Ok(existingItem);
         }
-        [HttpDelete("Items/Delete/{id}")]
-        public IActionResult DeleteItem(int id)
-        {
-            var item = _context.Items.FirstOrDefault(i => i.Id == id);
-            if (item == null)
-            {
-                return NotFound($"Item with id {id} not found.");
-            }
+        //[HttpDelete("Items/Delete/{id}")]
+        //public IActionResult DeleteItem(int id)
+        //{
+        //    var item = _context.Items.FirstOrDefault(i => i.Id == id);
+        //    if (item == null)
+        //    {
+        //        return NotFound($"Item with id {id} not found.");
+        //    }
+        //    item.IsDeleted = true; // Silinmiş gibi işaretle
+        //    _context.Clients.Update(item);
+        //    _context.SaveChanges();
 
-            _context.Items.Remove(item);
-            _context.SaveChanges();
-
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         [HttpDelete("{id}")]
         public IActionResult DeleteInvoice(int id)

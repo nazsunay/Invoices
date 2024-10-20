@@ -9,6 +9,7 @@
         public int Quantity { get; set; }
         public decimal Price { get; set; } // Ürün fiyatı
         public decimal Total { get; set; } // Toplam Tutar
+        public bool IsDeleted { get; set; } // Soft delete özelliği
 
         // Navigation Property for the Many-to-Many relation
         public List<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();

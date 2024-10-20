@@ -24,8 +24,9 @@ namespace Invoices.Entity
         public string Country { get; set; }
         [MaxLength(150)]
         public string StreetAddress { get; set; }
+        public bool IsDeleted { get; set; } // Soft delete özelliği
 
-       
+
         public List<Invoice> Invoices { get; set; } = new List<Invoice>();
     }
 
