@@ -16,8 +16,15 @@ namespace Invoices.Controllers
         {
             _context = context;
         }
+        [HttpGet("filter")]
+        public IActionResult GetClientByName([FromQuery] string name)
+        {
+            var invoices = _context.Clients
+                                   .Where(i => i.Name == name)
+                                   .ToList();
+            return Ok(invoices);
+        }
 
-     
 
         [HttpGet("All")]
         public ActionResult<List<Client>> GetAllClients()

@@ -86,14 +86,14 @@ namespace Invoices.Controllers
             return Ok(invoice);
         }
 
-        [HttpGet("filter")]
-        public IActionResult GetInvoicesByStatus([FromQuery] string status)
-        {
-            var invoices = _context.Invoices
-                                   .Where(i => i.Status == status)
-                                   .ToList();
-            return Ok(invoices);
-        }
+        //[HttpGet("filter")]
+        //public IActionResult GetInvoicesByStatus([FromQuery] string status)
+        //{
+        //    var invoices = _context.Invoices
+        //                           .Where(i => i.Status == status)
+        //                           .ToList();
+        //    return Ok(invoices);
+        //}
 
         // 1. Fatura Ekleme (Create)
         [HttpPost("Create")]
