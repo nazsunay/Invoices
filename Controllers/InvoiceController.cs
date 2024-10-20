@@ -26,6 +26,8 @@ namespace Invoices.Controllers
                 .Include(i => i.Payments)
                 .Include(i => i.InvoiceItems)
                 .ThenInclude(ii => ii.Item)
+                .Include(i => i.User)          // Kullanıcı bilgilerini almak için
+                .Include(i => i.Client)        // Client bilgilerini dahil etmek için
                 .Select(i => new
                 {
                     i.InvoiceId,
@@ -39,6 +41,17 @@ namespace Invoices.Controllers
                         i.User.Name,
                         i.User.Email,
                     },
+                    Client = new
+                    {
+                        i.Client.Id,
+                        i.Client.Name,
+                        i.Client.Email,
+                        i.Client.Phone,
+                        i.Client.City,
+                        i.Client.PostCode,
+                        i.Client.Country,
+                        i.Client.StreetAddress
+                    },
                     InvoiceItems = i.InvoiceItems.Select(ii => new
                     {
                         ii.Item.Id,
@@ -47,7 +60,7 @@ namespace Invoices.Controllers
                         ii.Item.Quantity,
                         ii.Item.Total,
                         ii.Item.PaymentMethod
-                    }).ToList(), // InvoiceItems içindeki Item verilerini al
+                    }).ToList(),
                     Payments = i.Payments.Select(p => new
                     {
                         p.PaymentId,
@@ -59,6 +72,7 @@ namespace Invoices.Controllers
 
             return Ok(invoices);
         }
+
 
         [HttpGet("/{id}")]
         public IActionResult GetInvoiceById(int id)

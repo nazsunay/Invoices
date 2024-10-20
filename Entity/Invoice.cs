@@ -9,6 +9,9 @@
         public decimal TotalAmount { get; set; }
         public string Status { get; set; } // Ödendi, Beklemede, İptal
 
+        public int ClientId {  get; set; }
+        public Client Client { get; set; }
+
         // Navigation Properties
         public User User { get; set; } // Faturayı kesen kullanıcı
         public List<Payment> Payments { get; set; } = new List<Payment>();
