@@ -119,6 +119,90 @@ namespace Invoices.Controllers
             
             return Ok(invoice);
         }
+        [HttpGet("Items")]
+        public ActionResult<List<Item>> GetAllItems()
+        {
+            var items = _context.Items.ToList();
+            return Ok(items);
+        }
+        [HttpGet("Items/{id}")] //belirli itemları getirmesi için 
+        public IActionResult GetItemById(int id)
+        {
+            var item = _context.Items.FirstOrDefault(i => i.Id == id);
+            if (item == null)
+            {
+                return NotFound($"Item with id {id} not found.");
+            }
+
+            return Ok(item);
+        }
+
+        [HttpPost("Items/Create")]
+        public IActionResult CreateItem([FromBody] DtoAddItem itemDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var item = new Item
+            {
+                
+                Name = itemDto.Name,
+                Amount = itemDto.Amount,
+                PaymentMethod = itemDto.PaymentMethod,
+                Quantity = itemDto.Quantity,
+                Price = itemDto.Price,
+                Total = itemDto.Total
+            };
+
+            _context.Items.Add(item);
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(GetItemById), new { id = item.Id }, item);
+        }
+
+
+        [HttpPut("Items/Update/{id}")]
+        public IActionResult UpdateItem(int id, [FromBody] Item item)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingItem = _context.Items.FirstOrDefault(i => i.Id == id);
+            if (existingItem == null)
+            {
+                return NotFound($"Item with id {id} not found.");
+            }
+
+            existingItem.Name = item.Name;
+            existingItem.Amount = item.Amount;
+            existingItem.PaymentMethod = item.PaymentMethod;
+            existingItem.Quantity = item.Quantity;
+            existingItem.Price = item.Price;
+            existingItem.Total = item.Total;
+
+            _context.Items.Update(existingItem);
+            _context.SaveChanges();
+
+            return Ok(existingItem);
+        }
+        [HttpDelete("Items/Delete/{id}")]
+        public IActionResult DeleteItem(int id)
+        {
+            var item = _context.Items.FirstOrDefault(i => i.Id == id);
+            if (item == null)
+            {
+                return NotFound($"Item with id {id} not found.");
+            }
+
+            _context.Items.Remove(item);
+            _context.SaveChanges();
+
+            return Ok();
+        }
 
 
         // 6. Fatura Sil
