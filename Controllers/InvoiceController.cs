@@ -43,7 +43,7 @@ namespace Invoices.Controllers
             return Ok(invoices);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("/{id}")]
         public IActionResult GetInvoiceById(int id)
         {
             var invoice = _context.Invoices.FirstOrDefault(i => i.InvoiceId == id);
@@ -65,7 +65,7 @@ namespace Invoices.Controllers
         }
 
         // 1. Fatura Ekleme (Create)
-        [HttpPost]
+        [HttpPost("Create")]
         public IActionResult CreateInvoice([FromBody] DtoAddInvoice invoiceDto)
         {
             if (!ModelState.IsValid)
@@ -73,7 +73,7 @@ namespace Invoices.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Veritabanı için Invoice nesnesi oluşturma
+            
             var invoice = new Invoice
             {
                 UserId = invoiceDto.UserId,
@@ -86,12 +86,12 @@ namespace Invoices.Controllers
             _context.Invoices.Add(invoice);
             _context.SaveChanges();
 
-            // Başarıyla oluşturulan fatura ID'siyle dönülüyor
+            
             return CreatedAtAction(nameof(GetInvoiceById), new { id = invoice.InvoiceId }, invoice);
         }
 
-        // 2. Fatura Güncelleme (Update)
-        [HttpPut("{id}")]
+        //  Fatura Güncelleme (Update)
+        [HttpPut("/Update/{id}")]
         public IActionResult UpdateInvoice(int id, [FromBody] DtoAddInvoice invoiceDto)
         {
             if (!ModelState.IsValid)
@@ -102,10 +102,10 @@ namespace Invoices.Controllers
             var invoice = _context.Invoices.Find(id);
             if (invoice == null)
             {
-                return NotFound($"Invoice with ID {id} not found.");
+                return NotFound($" {id} not found.");
             }
 
-            // Mevcut faturayı güncelleme
+            
             invoice.UserId = invoiceDto.UserId;
             invoice.InvoiceDate = invoiceDto.InvoiceDate;
             invoice.DueDate = invoiceDto.DueDate;
@@ -115,7 +115,7 @@ namespace Invoices.Controllers
             _context.Invoices.Update(invoice);
             _context.SaveChanges();
 
-            // Güncellenen fatura bilgisi döndürülüyor
+            
             return Ok(invoice);
         }
 
@@ -133,15 +133,8 @@ namespace Invoices.Controllers
             _context.Invoices.Remove(invoice);
             _context.SaveChanges();
 
-            return NoContent();
+            return Ok();
         }
-
-        // Fatura Mevcut Mu Kontrolü
-        private bool InvoiceExists(int id)
-        {
-            return _context.Invoices.Any(e => e.InvoiceId == id);
-        }
-
 
 
     }

@@ -11,7 +11,6 @@ namespace Invoices.Dto
         public decimal TotalAmount { get; set; }
         public string Status { get; set; } // Ödendi, Beklemede, İptal
 
-        // Navigation Properties
-        public User User { get; set; } // Faturayı kesen kullanıcı
+      
     }
 }
