@@ -26,8 +26,8 @@ namespace Invoices.Controllers
                 .Include(i => i.Payments)
                 .Include(i => i.InvoiceItems)
                 .ThenInclude(ii => ii.Item)
-                .Include(i => i.User)          
-                .Include(i => i.Client)        
+                .Include(i => i.User)
+                .Include(i => i.Client)
                 .Select(i => new
                 {
                     i.InvoiceId,
@@ -95,7 +95,6 @@ namespace Invoices.Controllers
             return Ok(invoices);
         }
 
-        // 1. Fatura Ekleme (Create)
         [HttpPost("Create")]
         public IActionResult CreateInvoice([FromBody] DtoAddInvoice invoiceDto)
         {
@@ -104,7 +103,7 @@ namespace Invoices.Controllers
                 return BadRequest(ModelState);
             }
 
-            
+
             var invoice = new Invoice
             {
                 UserId = invoiceDto.UserId,
@@ -117,11 +116,11 @@ namespace Invoices.Controllers
             _context.Invoices.Add(invoice);
             _context.SaveChanges();
 
-            
+
             return CreatedAtAction(nameof(GetInvoiceById), new { id = invoice.InvoiceId }, invoice);
         }
 
-        //  Fatura Güncelleme (Update)
+        
         [HttpPut("/Update/{id}")]
         public IActionResult UpdateInvoice(int id, [FromBody] DtoAddInvoice invoiceDto)
         {
@@ -136,7 +135,7 @@ namespace Invoices.Controllers
                 return NotFound($" {id} not found.");
             }
 
-            
+
             invoice.UserId = invoiceDto.UserId;
             invoice.InvoiceDate = invoiceDto.InvoiceDate;
             invoice.DueDate = invoiceDto.DueDate;
@@ -146,7 +145,7 @@ namespace Invoices.Controllers
             _context.Invoices.Update(invoice);
             _context.SaveChanges();
 
-            
+
             return Ok(invoice);
         }
         [HttpGet("Items")]
@@ -177,7 +176,7 @@ namespace Invoices.Controllers
 
             var item = new Item
             {
-                
+
                 Name = itemDto.Name,
                 Amount = itemDto.Amount,
                 PaymentMethod = itemDto.PaymentMethod,
@@ -249,16 +248,16 @@ namespace Invoices.Controllers
             return Ok();
         }
 
-        // 1. Tüm Faturalarla Birlikte Detaylı Rapor
-        [HttpGet("AllInvoices")]
+        //  Tüm Faturalarla Birlikte Detaylı Rapor
+        [HttpGet("AllInvoicesReport")]
         public ActionResult<List<DtoAddReport>> GetAllInvoicesReport()
         {
             var invoices = _context.Invoices
-                .Include(i => i.Client) // Müşteri bilgisi
-                .Include(i => i.User) // Kullanıcı bilgisi
-                .Include(i => i.Payments) // Ödeme bilgisi
+                .Include(i => i.Client) 
+                .Include(i => i.User) 
+                .Include(i => i.Payments) 
                 .Include(i => i.InvoiceItems)
-                    .ThenInclude(ii => ii.Item) // Fatura kalemleri ve ürün bilgisi
+                    .ThenInclude(ii => ii.Item) 
                 .Select(i => new DtoAddReport
                 {
                     InvoiceId = i.InvoiceId,
@@ -273,13 +272,21 @@ namespace Invoices.Controllers
                         Email = i.Client.Email,
                         Phone = i.Client.Phone,
                         City = i.Client.City,
-                        Country = i.Client.Country
+                        Country = i.Client.Country,
+                        PostCode = i.Client.PostCode,
+                        StreetAddress = i.Client.StreetAddress,
                     },
                     User = new DtoAddUser
                     {
                         UserId = i.User.UserId,
                         Name = i.User.Name,
-                        Email = i.User.Email
+                        Email = i.User.Email,
+                        Phone = i.User.Phone,
+                        City = i.User.City,
+                        Country = i.User.Country,
+                        PostCode = i.User.PostCode,
+                        StreetAddress = i.User.StreetAddress
+
                     },
                     Payments = i.Payments.Select(p => new DtoAddPayment
                     {
@@ -302,7 +309,7 @@ namespace Invoices.Controllers
 
             return Ok(invoices);
         }
-
+        
     }
 }
 
