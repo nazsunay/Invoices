@@ -20,26 +20,42 @@ namespace Invoices.Controllers
         }
 
         [HttpGet("AllList")]
-        public ActionResult<List<Invoice>> GetAllInvoices()
+        public ActionResult<List<object>> GetAllInvoices()
         {
             var invoices = _context.Invoices
-              .Include(i => i.Payments)
-              .Include(i => i.InvoiceItems)
-              .Select(i => new {
-                  i.InvoiceId,
-                  i.InvoiceDate,
-                  i.DueDate,
-                  i.TotalAmount,
-                  i.Status,
-                  User = new
-                  {
-                      i.User.UserId,
-                      i.User.Name,
-                  }
-
-
-              })
-              .ToList(); ;
+                .Include(i => i.Payments)
+                .Include(i => i.InvoiceItems)
+                .ThenInclude(ii => ii.Item)
+                .Select(i => new
+                {
+                    i.InvoiceId,
+                    i.InvoiceDate,
+                    i.DueDate,
+                    i.TotalAmount,
+                    i.Status,
+                    User = new
+                    {
+                        i.User.UserId,
+                        i.User.Name,
+                        i.User.Email,
+                    },
+                    InvoiceItems = i.InvoiceItems.Select(ii => new
+                    {
+                        ii.Item.Id,
+                        ii.Item.Name,
+                        ii.Item.Price,
+                        ii.Item.Quantity,
+                        ii.Item.Total,
+                        ii.Item.PaymentMethod
+                    }).ToList(), // InvoiceItems içindeki Item verilerini al
+                    Payments = i.Payments.Select(p => new
+                    {
+                        p.PaymentId,
+                        p.Amount,
+                        p.PaymentDate
+                    }).ToList()
+                })
+                .ToList();
 
             return Ok(invoices);
         }
