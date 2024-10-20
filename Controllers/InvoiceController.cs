@@ -26,8 +26,8 @@ namespace Invoices.Controllers
                 .Include(i => i.Payments)
                 .Include(i => i.InvoiceItems)
                 .ThenInclude(ii => ii.Item)
-                .Include(i => i.User)          // Kullanıcı bilgilerini almak için
-                .Include(i => i.Client)        // Client bilgilerini dahil etmek için
+                .Include(i => i.User)          
+                .Include(i => i.Client)        
                 .Select(i => new
                 {
                     i.InvoiceId,
@@ -155,7 +155,7 @@ namespace Invoices.Controllers
             var items = _context.Items.ToList();
             return Ok(items);
         }
-        [HttpGet("Items/{id}")] //belirli itemları getirmesi için 
+        [HttpGet("Items/{id}")]
         public IActionResult GetItemById(int id)
         {
             var item = _context.Items.FirstOrDefault(i => i.Id == id);
@@ -234,8 +234,6 @@ namespace Invoices.Controllers
             return Ok();
         }
 
-
-        // 6. Fatura Sil
         [HttpDelete("{id}")]
         public IActionResult DeleteInvoice(int id)
         {
@@ -251,6 +249,59 @@ namespace Invoices.Controllers
             return Ok();
         }
 
+        // 1. Tüm Faturalarla Birlikte Detaylı Rapor
+        [HttpGet("AllInvoices")]
+        public ActionResult<List<DtoAddReport>> GetAllInvoicesReport()
+        {
+            var invoices = _context.Invoices
+                .Include(i => i.Client) // Müşteri bilgisi
+                .Include(i => i.User) // Kullanıcı bilgisi
+                .Include(i => i.Payments) // Ödeme bilgisi
+                .Include(i => i.InvoiceItems)
+                    .ThenInclude(ii => ii.Item) // Fatura kalemleri ve ürün bilgisi
+                .Select(i => new DtoAddReport
+                {
+                    InvoiceId = i.InvoiceId,
+                    InvoiceDate = i.InvoiceDate,
+                    DueDate = i.DueDate,
+                    TotalAmount = i.TotalAmount,
+                    Status = i.Status,
+                    Client = new DtoAddClient
+                    {
+                        Id = i.Client.Id,
+                        Name = i.Client.Name,
+                        Email = i.Client.Email,
+                        Phone = i.Client.Phone,
+                        City = i.Client.City,
+                        Country = i.Client.Country
+                    },
+                    User = new DtoAddUser
+                    {
+                        UserId = i.User.UserId,
+                        Name = i.User.Name,
+                        Email = i.User.Email
+                    },
+                    Payments = i.Payments.Select(p => new DtoAddPayment
+                    {
+                        PaymentId = p.PaymentId,
+                        PaymentDate = p.PaymentDate,
+                        Amount = p.Amount,
+                        Status = p.Status
+                    }).ToList(),
+                    Items = i.InvoiceItems.Select(ii => new DtoAddItem
+                    {
+                        Id = ii.Item.Id,
+                        Name = ii.Item.Name,
+                        Quantity = ii.Item.Quantity,
+                        Price = ii.Item.Price,
+                        Total = ii.Item.Total,
+                        PaymentMethod = ii.Item.PaymentMethod
+                    }).ToList()
+                })
+                .ToList();
+
+            return Ok(invoices);
+        }
 
     }
 }

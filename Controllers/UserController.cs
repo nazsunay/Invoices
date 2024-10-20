@@ -22,5 +22,7 @@ namespace Invoices.Controllers
             var users = _context.Users.ToList();
             return Ok(users);
         }
+
+        
     }
 }
