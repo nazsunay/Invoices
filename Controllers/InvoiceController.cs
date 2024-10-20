@@ -132,7 +132,7 @@ namespace Invoices.Controllers
                 return NotFound($" {id} not found.");
             }
 
-            
+            invoice.ClientId = invoiceDto.ClientId;
             invoice.UserId = invoiceDto.UserId;
             invoice.InvoiceDate = invoiceDto.InvoiceDate;
             invoice.DueDate = invoiceDto.DueDate;
@@ -157,7 +157,7 @@ namespace Invoices.Controllers
             var item = _context.Items.FirstOrDefault(i => i.Id == id);
             if (item == null)
             {
-                return NotFound($"Item with id {id} not found.");
+                return NotFound($"!!{id} not found.");
             }
 
             return Ok(item);
